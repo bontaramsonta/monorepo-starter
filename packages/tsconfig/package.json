@@ -6,6 +6,10 @@
   "files": [
     "base.json",
     "nextjs.json",
-    "react-library.json"
-  ]
+    "react-library.json",
+    "fastify-server.json"
+  ],
+  "devDependencies": {
+    "fastify-tsconfig": "~1.0.1"
+  }
 }

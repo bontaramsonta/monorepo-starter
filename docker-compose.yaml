@@ -1,0 +1,32 @@
+version: "3.8"
+# docker-engine 19.03.0+
+# docker-compose 1.29.2+
+# just run `docker-compose up --build` in terminal
+services:
+  mongo:
+    image: mongo:5.0.8
+    restart: "no"
+    container_name: mongo
+    logging:
+      driver: "none" # comment out to see mongod logs
+    command: --replSet rs0
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo:/data/db
+      - ./config/mongoInit.js:/docker-entrypoint-initdb.d/init.js
+
+  redis:
+    image: redislabs/redismod
+    container_name: fletoredis
+    restart: "no"
+    logging:
+      driver: "none" # comment out to see mongod logs
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+
+volumes:
+  mongo:
+  redis:

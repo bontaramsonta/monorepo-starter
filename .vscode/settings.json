@@ -1,0 +1,30 @@
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "--->//!FOR A CLEANER VIEWPORT<---": false,
+    "**/node_modules": true,
+    "**/.eslintrc*.cjs": true,
+    "**/.eslintrc*.js": true,
+    "**/.eslintignore": true,
+    "**/.gitignore": true,
+    "**/.dockerignore": true,
+    "**/.turbo": true,
+    "---//!don't forget to revert changes before commit---": false,
+  },
+  "editor.defaultFormatter": "vscode.typescript-language-features",
+  "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
+  "javascript.format.semicolons": "remove",
+  "typescript.format.insertSpaceBeforeFunctionParenthesis": true,
+  "[dockercompose]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
+  "typescript.format.insertSpaceAfterTypeAssertion": true,
+  "typescript.format.semicolons": "remove",
+}
