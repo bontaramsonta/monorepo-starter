@@ -18,7 +18,7 @@ import { rm } from 'fs/promises'
       colours: true,
       env: {
         DEV: true,
-        PORT: 8080,
+        PORT: 8000,
         HOST: '0.0.0.0',
         VERSION: p.version[0],
         BASE_MONGO_URL: 'mongodb://localhost:27018'

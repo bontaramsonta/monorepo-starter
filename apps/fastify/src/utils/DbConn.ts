@@ -1,6 +1,6 @@
-import { Db, MongoClient, MongoOptions } from 'mongodb'
+import { Db, MongoClient, MongoOptions } from "mongodb"
 
-const MONGOBASEURL = process.env.BASE_MONGO_URL || 'mongodb://localhost:27017'
+const MONGOBASEURL = process.env.BASE_MONGO_URL || "mongodb://localhost:27017"
 
 type DbConnAppsType = {
   name: string
@@ -15,41 +15,41 @@ type AppObjectType = {
   [x: string]: any
 }
 
-export default class DbConn {
+class DbConn {
   // eslint-disable-next-line no-use-before-define
   private static _DbConn: DbConn
   private base: MongoClient | null = null
   private apps: DbConnAppsType[] = []
 
-  private setBase (base: MongoClient) {
+  private setBase(base: MongoClient) {
     if (!base) { this.base = base }
   }
 
-  private pushApps (app: DbConnAppsType) {
+  private pushApps(app: DbConnAppsType) {
     this.apps.push(app)
   }
 
-  static async init (): Promise<string> {
+  static async init(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       if (!DbConn._DbConn) {
         DbConn._DbConn = new DbConn()
         const client = new MongoClient(MONGOBASEURL, {
-          appName: 'fleto-global',
+          appName: "fleto-global",
           keepAlive: false,
           maxPoolSize: 1,
           directConnection: true
         })
         client.connect()
-        client.once('error', function () {
-          console.log('[db] error')
-          reject(new Error('db connection failed'))
+        client.once("error", function () {
+          console.log("[db] error")
+          reject(new Error("db connection failed"))
         })
-        client.once('open', async () => {
-          console.log('[db] base connection made')
+        client.once("open", async () => {
+          console.log("[db] base connection made")
           DbConn._DbConn.setBase(client)
 
           // Get apps db connection object
-          const doc = await client.db('global').collection('base').findOne()
+          const doc = await client.db("global").collection("base").findOne()
           console.log(doc?.apps)
           if (doc) {
             // console.log(1);
@@ -69,7 +69,7 @@ export default class DbConn {
                       ...appObject.conn_options
                     })
                     appConnection.connect()
-                    appConnection.once('open', async () => {
+                    appConnection.once("open", async () => {
                       // console.log(4);
                       console.log(`${app} connection open`)
                       // let baseDoc = await appConnection.db(app).collection('base').findOne({})
@@ -77,7 +77,7 @@ export default class DbConn {
                       DbConn._DbConn.pushApps({ name: app, conn: appConnection })
                       resolve(`${app} connection open`)
                     })
-                    appConnection.once('error', (connErr) => {
+                    appConnection.once("error", (connErr) => {
                       // console.log(-4);
                       console.log(`${app} connection error`)
                       reject(new Error(`${app} connection err ${connErr.message}`))
@@ -89,51 +89,51 @@ export default class DbConn {
                 }) // app promise
               }) // doc.map
             ).then(() => {
-              resolve('all connections established')
+              resolve("all connections established")
             }).catch((reason: Error) => {
               reject(reason.message)
             })
           } else {
-            console.log('db global base not found')
+            console.log("db global base not found")
           }
         }) // db "open"
       } else {
-        resolve('already init')
+        resolve("already init")
       }
     }) // top-level promise
   }
 
-  static getConn (app?: string): Db {
+  static getConn(app?: string): Db {
     if (app) {
       // give specific app connection
       if (DbConn._DbConn.apps.length === 0) {
-        throw new Error('not initialized')
+        throw new Error("not initialized")
       }
       const selectedApp = DbConn._DbConn.apps.filter(a => a.name === app)
       if (selectedApp.length === 0) {
-        throw new Error('app not found')
+        throw new Error("app not found")
       }
       return selectedApp[0].conn.db(`${selectedApp[0].name}`)
     } else if (DbConn._DbConn.base) {
-      return DbConn._DbConn.base.db('global')
+      return DbConn._DbConn.base.db("global")
     } else {
-      throw new Error('not initialized')
+      throw new Error("not initialized")
     }
   }
 
-  static close (): Promise<string> {
+  static close(): Promise<string> {
     return new Promise((resolve, reject) => {
       const base = DbConn._DbConn.base
       const apps = DbConn._DbConn.apps
       // close base connection to db
       if (base) {
-        base.once('close', () => {
+        base.once("close", () => {
           // then close all app connections
           Promise.all(
             apps.map((app): Promise<void> => {
               return new Promise<void>((resolve, reject) => {
                 try {
-                  app.conn.once('close', () => {
+                  app.conn.once("close", () => {
                     console.log(`${app.name} db conn closed`)
                     resolve()
                   })
@@ -145,9 +145,9 @@ export default class DbConn {
               })
             })
           ).then(() => {
-            resolve('all db connections closed')
+            resolve("all db connections closed")
           }).catch(() => {
-            reject(new Error('db conn closing err'))
+            reject(new Error("db conn closing err"))
           })
         })
         base.close()
@@ -155,3 +155,5 @@ export default class DbConn {
     })
   }
 }
+export default DbConn
+export { DbConn }
