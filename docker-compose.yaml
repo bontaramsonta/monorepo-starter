@@ -14,7 +14,7 @@ services:
       - "27018:27017"
     volumes:
       - mongo:/data/db
-      # - ./config/mongoInit.js:/docker-entrypoint-initdb.d/init.js
+      - ./mongo/mongoInit.js:/docker-entrypoint-initdb.d/init.js
 
   redis:
     image: redislabs/redismod
